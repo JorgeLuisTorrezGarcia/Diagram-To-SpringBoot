@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos | Diagram To SpringBoot</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/resources/css/proyecto.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">Diagram To SpringBoot</div>
+        <div class="user-menu">
+            <a href="/createproyecto" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Nuevo Proyecto
+            </a>
+            <span class="user-name" onclick="showLogoutModal()">
+                <%= name %>
+            </span>
+            <img src="/resources/admin/img/undraw_profile_2.svg" alt="User Avatar" class="user-avatar" onclick="showLogoutModal()">
+            
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h1>Mis Proyectos</h1>
+                <p class="project-count">
+                    <%= proyect.length %> proyectos activos
+                </p>
+            </div>
+
+        </div>
+
+        <div class="project-grid">
+            <% proyect.forEach(function(project, index) { %>
+                <div class="project-card" data-index="<%= index %>">
+                    <h3 class="project-title">
+                        <i class="fas fa-project-diagram"></i>
+                        <%= project.name %>
+                    </h3>
+                    <div class="project-actions">
+                        <button class="btn btn-primary" onclick="window.location.href='pizarra/<%= project.id %>'">
+                            <i class="fas fa-edit"></i> Abrir
+                        </button>
+                        <button class="btn btn-outline" onclick="shareProject('<%= project.id %>')">
+                            <i class="fas fa-share-alt"></i> Compartir
+                        </button>
+                        <form action="/proyecto/eliminar/<%= project.id %>" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('¿Estás seguro de que quieres eliminar este proyecto?')">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+    </main>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Compartir Proyecto</h3>
+                <button class="close-modal" onclick="closeModal('shareModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Link de invitación:</label>
+                <div class="input-group">
+                    <input type="text" id="shareLink" readonly>
+                    <button class="btn btn-primary" onclick="copyShareLink()">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+                </div>
+                <p class="info-text">
+                    <i class="fas fa-info-circle"></i>
+                    Cualquier persona con este enlace podrá unirse al proyecto en tiempo real.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>¿Cerrar sesión?</h3>
+                <button class="close-modal" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres cerrar sesión?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="closeModal('logoutModal')">Cancelar</button>
+                    <a href="/logout" class="btn btn-primary">Cerrar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>JLTG &copy; 2025 | DiagramToSpringBoot</p>
+        <div class="social-links">
+            <a href="#" target="_blank" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+            <a href="#" target="_blank" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" target="_blank" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="#" target="_blank" aria-label="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </footer>
+
+
+    <script>
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showLogoutModal() {
+            showModal('logoutModal');
+        }
+
+        function shareProject(projectId) {
+            const shareUrl = `http://localhost:3000/pizarra/${projectId}`;
+            document.getElementById('shareLink').value = shareUrl;
+            showModal('shareModal');
+        }
+
+        function copyPageUrlinvitacion(url) {
+            copyToClipboard(url);
+            showToast('URL de invitación copiada al portapapeles');
+        }
+
+        function copyShareLink() {
+            const shareLink = document.getElementById('shareLink').value;
+            copyToClipboard(shareLink);
+            showToast('Link de invitación copiado');
+            setTimeout(() => closeModal('shareModal'), 1000);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(() => {
+                // Fallback for older browsers
+                const tempInput = document.createElement('input');
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        
+
+        // Escape key closes modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal.active');
+                modals.forEach(modal => modal.classList.remove('active'));
+            }
+        });
+    </script>
+
+
+
+</body>
+
+</html>

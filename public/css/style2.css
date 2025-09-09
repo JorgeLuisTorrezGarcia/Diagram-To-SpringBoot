@@ -1,0 +1,180 @@
+:root {
+    --primary-color: #6366f1;
+    --secondary-color: #3b82f6;
+    --accent-color: #10b981;
+    --background: #0f172a;
+    --surface: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --danger: #ef4444;
+}
+
+/* Reset de márgenes y padding para un diseño más limpio */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilo general del cuerpo */
+body {
+    background-color: var(--background);
+    font-family: 'Arial', sans-serif;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Contenedor de la barra de herramientas */
+.container {
+    background-color: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 15px 20px;
+    /* Espaciado más compacto */
+    box-sizing: border-box;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Sección de herramientas (botones) */
+.toolbar-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* Reducción de espacio entre botones */
+    margin-bottom: 15px;
+    justify-content: center;
+    /* Centra los botones */
+}
+
+.btn-ai {
+    background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+    color: white;
+}
+/* Botones de herramientas */
+.tool-button {
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    /* Tamaño de fuente más pequeño */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /*min-width: 50px;*/
+    /* Tamaño mínimo para los botones */
+}
+
+.tool-button:hover {
+    background-color: var(--secondary-color);
+}
+
+.tool-button.active {
+    background-color: var(--accent-color);
+}
+
+/* Estilo de los botones de acción */
+.toolbar-section button {
+    background-color: var(--secondary-color);
+    color: var(--text-primary);
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    margin: 5px;
+}
+
+.toolbar-section button:hover {
+    background-color: var(--accent-color);
+}
+
+/* Canvas para el diagrama */
+.lienzo {
+    margin-top: 3vh;
+    width: 90vw;
+    /* Ajuste al 90% del ancho de la pantalla */
+    max-width: 1500px;
+    height: 75vh;
+    /* Ajuste dinámico */
+    border-radius: 12px;
+    background-color: var(--surface);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+/* Modal para editar clases */
+.modal {
+    display: none;
+    /* Oculto por defecto */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: var(--surface);
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    text-align: center;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    color: var(--text-secondary);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--primary-color);
+}
+
+/* Estilo para inputs y textarea dentro del modal */
+.modal-content input[type="text"],
+.modal-content textarea {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    background-color: var(--surface);
+    color: var(--text-primary);
+}
+
+.modal-content button {
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: var(--secondary-color);
+}

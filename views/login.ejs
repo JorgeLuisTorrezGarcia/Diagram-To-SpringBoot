@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login | Diagram To SpringBoot</title>
+	<link rel="stylesheet" href="resources/css/login.css">
+	<link rel="shortcut icon" href="resources/css/logoFICCT.jpg" type="image/x-icon">
+</head>
+<body>
+	
+	<div class="login-form">
+		<h1>Diagram To SpringBoot</h1>
+		<form action="auth" method="POST">
+			<input type="text" name="user" placeholder="Usuario" autofocus required>
+			<input type="password" name="pass" placeholder="Contraseña" required>
+			<input type="submit" class="btn-login" value="Acceder">
+		</form>
+		<a href="register" class="btn-register">Crear cuenta</a>
+		
+		
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+		<% if (typeof alert != "undefined")  { %>
+			<script>
+			Swal.fire({
+			title:'<%= alertTitle %>',
+			text:'<%= alertMessage %>',
+			icon:'<%= alertIcon %>',
+			showConfirmButton: '<%= showConfirmButton %>',
+			timer: '<%= timer %>'
+			}).then(()=>{
+				window.location='/proyecto<%= ruta %>'
+			})
+			</script>
+		<% } %>
+	</div>
+	<div class="imagen">
+		<h1> Bienvenido...</h1>
+	</div>
+</body>
+</html>

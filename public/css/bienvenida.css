@@ -1,0 +1,76 @@
+body {
+    background: linear-gradient(#007bff, #0056b3) fixed;
+    /* Degradado azul */
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    /* Tipografía */
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Establecer el tamaño de la pantalla */
+}
+.logo {
+    background-image: url('./logoFICCT.jpg');
+        /* Ruta de la imagen de fondo */
+        background-size: cover;
+        padding: 20px;
+        height: 300px;
+        text-align: center;
+        color: #132dc5;
+        /* Color del texto */
+        max-width: 600px;
+        /* Ancho máximo del contenedor */
+        border-radius: 10px;
+        /* Bordes redondeados */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        /* Sombra */
+        
+}
+.contenedor {
+   
+    background-size: cover;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    /* Color del texto */
+    max-width: 600px;
+    /* Ancho máximo del contenedor */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    /* Sombra */
+}
+
+h1 {
+    
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+    background-color: #007bff;
+    /* Color de fondo del enlace */
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    /* Efecto de transición */
+}
+
+a:hover {
+    background-color: #0056b3;
+    /* Color de fondo al pasar el mouse */
+}
+
+@media screen and (max-width: 768px) {
+    .contenedor {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}

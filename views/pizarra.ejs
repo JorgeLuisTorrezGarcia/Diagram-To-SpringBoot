@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Diagrama | <%= proyecto.name %>
+  </title>
+  <link rel="shortcut icon" href="resources/css/logoFICCT.jpg" type="image/x-icon">
+
+  <!-- Enlace al archivo CSS externo -->
+  <link rel="stylesheet" href="/resources/css/style2.css">
+
+  <!-- Font Awesome para íconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+
+<body>
+  <!-- Barra de Herramientas -->
+  <div class="container">
+    <div class="toolbar-section">
+      <button class="componentes tool-button active" id="tool-select" title="Select/Move"><i class="fas fa-mouse-pointer"></i></button>
+      <button class="componentes tool-button" id="tool-class" title="Add Class">Clase</button>
+      <button class="componentes tool-button" id="tool-one_to_many" title="one_to_many">one_to_many</button>
+      <button class="componentes tool-button" id="tool-one_to_one" title="one_to_one">one_to_one</button>
+      <button class="componentes tool-button" id="tool-many_to_many" title="many_to_many">many_to_many</button>
+      <button class="componentes tool-button" id="tool-many_to_one" title="many_to_one">many_to_one</button>
+      <button class="componentes tool-button" id="tool-delete" title="Delete"><i class="fas fa-eraser">Delete</i></button>
+    </div>
+
+    <div class="toolbar-section">
+      <strong>Actions:</strong>
+      <button class="componentes" id="saveButton"><i class="fas fa-save"></i> Save</button>
+      <button class="componentes" id="exportImageButton" title="Export as Image">Export IMG</button>
+      <button class="componentes" id="downloadJavaButton" title="Export Project">SpringBoot</button>
+
+    </div>
+    <button class="btn btn-ai" id="openAIAssistantButton">
+      <img src="/resources/css/gemini.svg" alt="AI Assistant">
+    </button>
+    
+    <div id="aiModal" class="modal">
+      <div class="modal-content">
+        <span id="closeAIModal" class="close">&times;</span>
+        <h2>Asistente de IA</h2>
+        <p>Describe las clases y sus relaciones que deseas generar:</p>
+        <textarea id="aiPromptInput" rows="5"
+          placeholder="Ejemplo: Necesito una clase Cliente con atributos id y nombre, y una clase Pedido con id y fecha. Un cliente puede tener muchos pedidos."></textarea><br><br>
+        <button id="generateModelButton">Generar Diagrama</button>
+      </div>
+    </div>
+
+    
+  </div>
+
+  <!-- Canvas para dibujar el diagrama -->
+  <div class="lienzo">
+    <canvas id="canvas" width="1500" height="800"></canvas>
+  </div>
+
+  <!-- Campos ocultos para pizarra_id y proyecto_name -->
+  <input id="objetos" type="hidden" value='<%= JSON.stringify(proyecto.objetos) %>'>
+
+  <input id="pizarra_id" type="hidden" value="<%= pizarra_id %>">
+  <input id="proyecto_name" type="hidden" value="<%= proyecto.name %>">
+
+  <!-- Modal para editar clases -->
+  <div id="classModal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2>Editar Clase</h2>
+      <label for="className">Nombre de la clase:</label><br>
+      <input type="text" id="className"><br><br>
+      <h3>Atributos</h3>
+      <textarea id="classAttributes" rows="5" placeholder="Ingresa cada atributo en una línea separada"></textarea><br><br>
+      <button id="saveClass">Guardar</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Scripts personalizados -->
+
+ 
+
+  <script src="/resources/js/UMLClass.js"></script>
+  <script src="/resources/js/UMLRelationship.js"></script>
+  <script src="/resources/js/main.js"></script>
+  <!-- <script src="/resources/js/extras.js"></script> -->
+
+
+</body>
+
+</html>
