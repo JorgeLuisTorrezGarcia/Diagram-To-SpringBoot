@@ -178,3 +178,52 @@ body {
 .modal-content button:hover {
     background-color: var(--secondary-color);
 }
+
+/* Estilos para la barra de herramientas de IA */
+.ai-toolbar {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-width: 350px;
+}
+
+.ai-toolbar h4 {
+    margin: 0 0 10px 0;
+    color: #2196F3;
+}
+
+#ai-description {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    resize: vertical;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#generate-with-ai {
+    padding: 8px 15px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#generate-with-ai:hover {
+    background: #1976D2;
+}
+
+#ai-loading {
+    display: none;
+    margin-top: 10px;
+    color: #666;
+}

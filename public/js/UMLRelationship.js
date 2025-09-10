@@ -99,24 +99,6 @@ class UMLRelationship {
             case 'one_to_one':
                 // Simple arrowhead at the 'to' end
                 context.beginPath();
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle - Math.PI / 6), toPoint.y - headlen * Math.sin(angle - Math.PI / 6));
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle + Math.PI / 6), toPoint.y - headlen * Math.sin(angle + Math.PI / 6));
-                context.stroke();
-                break;
-            case 'one_to_many':
-                // Simple arrowhead at the 'to' end
-                context.beginPath();
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle - Math.PI / 6), toPoint.y - headlen * Math.sin(angle - Math.PI / 6));
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle + Math.PI / 6), toPoint.y - headlen * Math.sin(angle + Math.PI / 6));
-                context.stroke();
-                break;
-            case 'inheritance':
-                // Hollow triangle at the 'to' end
-                context.beginPath();
                 context.save();
                 context.translate(toPoint.x, toPoint.y);
                 context.rotate(angle);
@@ -127,56 +109,15 @@ class UMLRelationship {
                 context.stroke();
                 context.restore();
                 break;
-            case 'aggregation':
-                // Hollow diamond at the 'from' end
+            case 'one_to_many':
+                // Simple arrowhead at the 'to' end
                 context.beginPath();
-                context.save();
-                context.translate(fromPoint.x, fromPoint.y);
-                context.rotate(angle + Math.PI); // Rotate to point towards the 'from' class
-                context.moveTo(0, 0);
-                context.lineTo(headlen, -headlen / 2);
-                context.lineTo(headlen * 2, 0);
-                context.lineTo(headlen, headlen / 2);
-                context.closePath();
+                context.moveTo(toPoint.x, toPoint.y);
+                context.lineTo(toPoint.x - headlen * Math.cos(angle - Math.PI / 6), toPoint.y - headlen * Math.sin(angle - Math.PI / 6));
+                context.moveTo(toPoint.x, toPoint.y);
+                context.lineTo(toPoint.x - headlen * Math.cos(angle + Math.PI / 6), toPoint.y - headlen * Math.sin(angle + Math.PI / 6));
                 context.stroke();
-                context.restore();
-                break;
-            case 'composition':
-                // Filled diamond at the 'from' end
-                context.beginPath();
-                context.save();
-                context.translate(fromPoint.x, fromPoint.y);
-                context.rotate(angle + Math.PI); // Rotate to point towards the 'from' class
-                context.moveTo(0, 0);
-                context.lineTo(headlen, -headlen / 2);
-                context.lineTo(headlen * 2, 0);
-                context.lineTo(headlen, headlen / 2);
-                context.closePath();
-                context.fill(); // Fill the diamond
-                context.stroke();
-                context.restore();
                 break;
         }
-    }
-
-    generateXMI(xmlDoc) {
-        if (this.relationType === 'inheritance') {
-            // Create UML:Generalization element
-            const generalizationElement = xmlDoc.createElement('UML:Generalization');
-            generalizationElement.setAttribute('xmi.id', `EAID_${this.id}`);
-            generalizationElement.setAttribute('subtype', `EAID_${this.from}`);
-            generalizationElement.setAttribute('supertype', `EAID_${this.to}`);
-            generalizationElement.setAttribute('visibility', 'public');
-
-            // ModelElement.taggedValue
-            const taggedValues = xmlDoc.createElement('UML:ModelElement.taggedValue');
-            generalizationElement.appendChild(taggedValues);
-
-            return generalizationElement;
-        }
-
-        // Handle other relationship types if needed
-
-        return null;
     }
 }

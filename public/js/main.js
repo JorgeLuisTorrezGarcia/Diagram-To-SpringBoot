@@ -540,9 +540,10 @@ document.addEventListener("DOMContentLoaded", () => {
   setupToolbar();
   adjustCanvasSize();
   updateCursor();
-
+  
   // Realizar el primer dibujado
   repaintCanvas();
+  setupAITool();
 
   // Agregar manejador de eventos para guardar
   window.addEventListener('beforeunload', () => {
@@ -551,118 +552,143 @@ document.addEventListener("DOMContentLoaded", () => {
 }); window.addEventListener('resize', adjustCanvasSize);
 
 // ==================================================
-// AI Assistant Logic & Listeners
+// AI GENERATION - AGREGAR A EXISTENTE
 // ==================================================
-function setupAIAssistant() {
-  const aiModal = document.getElementById('aiModal');
-  const openButton = document.getElementById('openAIAssistantButton');
-  const closeButton = document.getElementById('closeAIModal');
-  const generateButton = document.getElementById('generateModelButton');
-  const aiPromptInput = document.getElementById('aiPromptInput');
 
-  // Abre el modal de la IA
-  openButton.addEventListener('click', () => {
-    aiModal.style.display = 'block';
-  });
+// Función para generar con IA
+async function generateWithAI() {
+  const description = document.getElementById('ai-description').value.trim();
+  const aiLoading = document.getElementById('ai-loading');
 
-  // Cierra el modal de la IA
-  closeButton.addEventListener('click', () => {
-    aiModal.style.display = 'none';
-  });
+  console.log("Solicitando generación con IA:", description);
 
-  // Genera el diagrama con la IA
-  generateButton.addEventListener('click', async () => {
-    const prompt = aiPromptInput.value.trim();
-    if (!prompt) {
-      showMessage('Por favor, describe el modelo que deseas generar.', 3000);
-      return;
-    }
-
-    showMessage('Generando diagrama con IA... Por favor, espera.', 60000);
-    aiModal.style.display = 'none';
-
-    try {
-      const response = await fetch('/api/ai/generate-model', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ prompt: prompt })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error del servidor. Revisa el backend.');
-      }
-
-      const modelData = await response.json();
-
-      // Usa la función que ya tenías para procesar y dibujar los datos
-      processAndDrawModel(modelData);
-
-      showMessage('¡Diagrama generado con éxito!', 3000);
-      aiPromptInput.value = '';
-    } catch (error) {
-      console.error('Error al generar el modelo con IA:', error);
-      showMessage(error.message || 'Error desconocido al generar el diagrama.', 5000);
-    }
-  });
-
-  // Cierra el modal si el usuario hace clic fuera de él
-  window.addEventListener('click', (event) => {
-    if (event.target === aiModal) {
-      aiModal.style.display = 'none';
-    }
-  });
-}
-
-// ==================================================
-// Helper Function para procesar el JSON de la IA
-// ==================================================
-function processAndDrawModel(modelData) {
-  if (!modelData || !modelData.classes) {
-    console.error('El formato de datos de la IA es incorrecto.', modelData);
-    showMessage('El formato de respuesta de la IA es incorrecto.', 5000);
+  if (!description) {
+    showMessage('Por favor, describe lo que quieres generar', 3000);
     return;
   }
 
-  const newClasses = [];
-  const newRelationships = [];
+  if (aiLoading) aiLoading.style.display = 'block';
 
-  // Posiciona las nuevas clases en el canvas de manera ordenada
-  let startX = 50;
-  const startY = 50;
-  const paddingX = 200;
+  try {
+    const response = await fetch('/generate-diagram', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        description: description,
+        pizarraId: pizarraId
+      })
+    });
 
-  // 1. Crear las clases y agregarlas al estado global
-  modelData.classes.forEach((cls, index) => {
-    const newClass = new UMLClass(
-      cls.id,
-      startX + (index * paddingX),
-      startY,
-      cls.name,
-      cls.attributes.map(attr => `${attr.name}:${attr.type}`)
-    );
-    objetos.push(newClass);
-    newClasses.push(newClass);
-  });
+    const result = await response.json();
+    console.log("Respuesta del servidor:", result);
 
-  // 2. Crear las relaciones
-  modelData.relationships.forEach(rel => {
-    const newRelationship = new UMLRelationship(
-      rel.id,
-      rel.sourceId,
-      rel.targetId,
-      rel.type
-    );
-    objetos.push(newRelationship);
-    newRelationships.push(newRelationship);
-  });
+    if (result.success) {
+      let addedCount = 0;
+      let skippedCount = 0;
 
-  // 3. Sincronizar con Socket.io
-  newClasses.forEach(cls => emitSocketEvent('agregar', cls));
-  newRelationships.forEach(rel => emitSocketEvent('agregar', rel));
+      console.log("Objetos recibidos:", result.objetos);
 
-  // 4. Repintar el canvas para mostrar los nuevos elementos
-  repaintCanvas();
+      // Agregar a lo existente (no reemplazar)
+      result.objetos.forEach(obj => {
+        // Verificar si el objeto ya existe
+        const alreadyExists = objetos.some(existingObj => existingObj.id === obj.id);
+
+        if (!alreadyExists) {
+          if (obj.type === 'UMLClass') {
+            const newClass = new UMLClass(
+              obj.id,
+              obj.x,
+              obj.y,
+              obj.name,
+              obj.attributes
+            );
+            newClass.width = obj.width;
+            newClass.height = obj.height;
+            objetos.push(newClass);
+            emitSocketEvent('agregar', newClass);
+            addedCount++;
+
+          } else if (obj.type === 'UMLRelationship') {
+            // Verificar que ambas clases existan para la relación
+            const fromClassExists = objetos.some(o => o.type === 'UMLClass' && o.id === obj.from);
+            const toClassExists = objetos.some(o => o.type === 'UMLClass' && o.id === obj.to);
+
+            if (fromClassExists && toClassExists) {
+              const newRel = new UMLRelationship(
+                obj.id,
+                obj.from,
+                obj.to,
+                obj.relationType
+              );
+              objetos.push(newRel);
+              emitSocketEvent('agregar', newRel);
+              addedCount++;
+            } else {
+              console.log("Relación omitida - clases no encontradas:", obj);
+              skippedCount++; // Relación sin clases
+            }
+          }
+        } else {
+          console.log("Objeto duplicado omitido:", obj);
+          skippedCount++; // Objeto duplicado
+        }
+      });
+
+      repaintCanvas();
+
+      // Mensaje informativo
+      if (addedCount > 0) {
+        showMessage(`✅ Se agregaron ${addedCount} nuevos elementos al diagrama${skippedCount > 0 ? ` (${skippedCount} omitidos)` : ''}`, 5000);
+      } else {
+        showMessage('⚠️ No se agregaron nuevos elementos. Puede que ya existan o falten clases para las relaciones.', 5000);
+      }
+
+    } else {
+      showMessage('Error: ' + result.error, 5000);
+    }
+
+  } catch (error) {
+    console.error('Error generating with AI:', error);
+    showMessage('Error al conectar con el servicio de IA', 5000);
+  } finally {
+    if (aiLoading) aiLoading.style.display = 'none';
+  }
+}
+// Configurar el event listener para el botón de IA
+function setupAITool() {
+  const generateButton = document.getElementById('generate-with-ai');
+  if (generateButton) {
+    generateButton.addEventListener('click', generateWithAI);
+  }
+}
+
+// Función auxiliar para encontrar espacio disponible para nuevas clases
+function findAvailablePosition() {
+  // Buscar una posición que no esté muy ocupada
+  const attempts = 10;
+  for (let i = 0; i < attempts; i++) {
+    const x = 100 + Math.random() * 1000;
+    const y = 100 + Math.random() * 500;
+
+    // Verificar si hay espacio (mínimo 200px de distancia)
+    const hasSpace = !objetos.some(obj => {
+      if (obj.type === 'UMLClass') {
+        const distance = Math.sqrt(Math.pow(obj.x - x, 2) + Math.pow(obj.y - y, 2));
+        return distance < 200;
+      }
+      return false;
+    });
+
+    if (hasSpace) {
+      return { x: Math.round(x), y: Math.round(y) };
+    }
+  }
+
+  // Si no encuentra espacio, devolver una posición aleatoria
+  return {
+    x: Math.round(100 + Math.random() * 1000),
+    y: Math.round(100 + Math.random() * 500)
+  };
 }

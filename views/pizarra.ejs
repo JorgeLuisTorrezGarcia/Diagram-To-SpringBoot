@@ -33,22 +33,29 @@
       <button class="componentes" id="downloadJavaButton" title="Export Project">SpringBoot</button>
 
     </div>
-    <button class="btn btn-ai" id="openAIAssistantButton">
-      <img src="/resources/css/gemini.svg" alt="AI Assistant">
-    </button>
     
-    <div id="aiModal" class="modal">
-      <div class="modal-content">
-        <span id="closeAIModal" class="close">&times;</span>
-        <h2>Asistente de IA</h2>
-        <p>Describe las clases y sus relaciones que deseas generar:</p>
-        <textarea id="aiPromptInput" rows="5"
-          placeholder="Ejemplo: Necesito una clase Cliente con atributos id y nombre, y una clase Pedido con id y fecha. Un cliente puede tener muchos pedidos."></textarea><br><br>
-        <button id="generateModelButton">Generar Diagrama</button>
+    <div class="ai-toolbar">
+      <h4>✨ Generar con IA</h4>
+      <textarea id="ai-description" placeholder="Ejemplos:
+        • 'Agrega una clase Producto con id:Long, nombre:String, precio:Double'
+        • 'Necesito un ejemplo de sistema de ventas'
+        • 'Añade relación one-to-many entre Cliente y Pedido'
+        • 'Genera 3 clases para un sistema bancario'" rows="4"
+        style="width: 300px; padding: 8px; margin: 5px 0;"></textarea>
+    
+      <button id="generate-with-ai"
+        style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        🚀 Generar y Agregar
+      </button>
+    
+      <div id="ai-loading" style="display: none; margin-top: 10px; color: #666;">
+        ⏳ Generando con Gemini AI...
+      </div>
+    
+      <div style="font-size: 12px; color: #666; margin-top: 10px;">
+        💡 Los nuevos elementos se agregarán al diagrama actual
       </div>
     </div>
-
-    
   </div>
 
   <!-- Canvas para dibujar el diagrama -->
