@@ -6,7 +6,7 @@ class UMLRelationship {
         this.relationType = relationType;
         this.type = 'UMLRelationship';
     }
-    // Función para dibujar la relación
+
     draw(context, classes) {
         const fromClass = classes.find(c => c.id === this.from);
         const toClass = classes.find(c => c.id === this.to);
@@ -20,104 +20,101 @@ class UMLRelationship {
             context.beginPath();
             context.moveTo(fromPoint.x, fromPoint.y);
             context.lineTo(toPoint.x, toPoint.y);
-
-            // Ajustar estilo según el tipo de relación
-            switch (this.relationType) {
-                case 'inheritance':
-                    context.setLineDash([]);
-                    context.lineWidth = 2;
-                    break;
-                case 'aggregation':
-                    context.setLineDash([5, 5]);
-                    context.lineWidth = 1;
-                    break;
-                case 'composition':
-                    context.setLineDash([]);
-                    context.lineWidth = 2;
-                    break;
-                case 'association':
-                default:
-                    context.setLineDash([]);
-                    context.lineWidth = 1;
-            }
-
+            context.strokeStyle = '#E0F2FE'; // Color de línea claro
+            context.lineWidth = 2.5; // Grosor de línea
             context.stroke();
-            // Restaurar el estilo predeterminado
-            context.setLineDash([]);
-            context.lineWidth = 1;
-            this.drawRelationIndicator(context, fromPoint, toPoint);
+
+            // Dibujar los indicadores de cardinalidad
+            this.drawCardinality(context, fromPoint, toPoint, this.relationType);
         }
     }
-    // Función para calcular el punto de intersección del borde
+
     getIntersectionPoint(fromClass, toClass) {
         const fromCenter = { x: fromClass.x + fromClass.width / 2, y: fromClass.y + fromClass.height / 2 };
         const toCenter = { x: toClass.x + toClass.width / 2, y: toClass.y + toClass.height / 2 };
+        const dx = toCenter.x - fromCenter.x;
+        const dy = toCenter.y - fromCenter.y;
+        const angle = Math.atan2(dy, dx);
+        const halfWidth = fromClass.width / 2;
+        const halfHeight = fromClass.height / 2;
+        const slope = dy / dx;
 
-        // Calcula el ángulo de la línea desde el centro de la clase de origen al centro de la clase de destino
-        const angle = Math.atan2(toCenter.y - fromCenter.y, toCenter.x - fromCenter.x);
+        let intersectionX, intersectionY;
 
-        // Calcular el punto de intersección en el borde de la clase de origen
-        if (Math.abs(Math.cos(angle)) > Math.abs(Math.sin(angle))) {
-            // Intersección en los lados izquierdo o derecho
-            if (Math.cos(angle) > 0) {
-                return { x: fromClass.x + fromClass.width, y: fromCenter.y + (fromClass.width / 2) * Math.tan(angle) };
-            } else {
-                return { x: fromClass.x, y: fromCenter.y - (fromClass.width / 2) * Math.tan(angle) };
-            }
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            intersectionX = (dx > 0) ? fromClass.x + fromClass.width : fromClass.x;
+            intersectionY = fromCenter.y + slope * (intersectionX - fromCenter.x);
         } else {
-            // Intersección en los lados superior o inferior
-            if (Math.sin(angle) > 0) {
-                return { x: fromCenter.x + (fromClass.height / 2) / Math.tan(angle), y: fromClass.y + fromClass.height };
-            } else {
-                return { x: fromCenter.x - (fromClass.height / 2) / Math.tan(angle), y: fromClass.y };
-            }
+            intersectionY = (dy > 0) ? fromClass.y + fromClass.height : fromClass.y;
+            intersectionX = fromCenter.x + (intersectionY - fromCenter.y) / slope;
         }
-    }
-    drawRelationIndicator(context, fromPoint, toPoint) {
-        const angle = Math.atan2(toPoint.y - fromPoint.y, toPoint.x - fromPoint.x);
-        const headlen = 10; // length of head in pixels
 
-        switch (this.relationType) {
-            case 'many_to_one':
-                // Simple arrowhead at the 'to' end
-                context.beginPath();
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle - Math.PI / 6), toPoint.y - headlen * Math.sin(angle - Math.PI / 6));
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle + Math.PI / 6), toPoint.y - headlen * Math.sin(angle + Math.PI / 6));
-                context.stroke();
-                break;
-            case 'many_to_many':
-                // Simple arrowhead at the 'to' end
-                context.beginPath();
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle - Math.PI / 6), toPoint.y - headlen * Math.sin(angle - Math.PI / 6));
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle + Math.PI / 6), toPoint.y - headlen * Math.sin(angle + Math.PI / 6));
-                context.stroke();
-                break;
+        return { x: intersectionX, y: intersectionY };
+    }
+
+    drawCardinality(context, fromPoint, toPoint, type) {
+        const headLength = 10;
+        const angle = Math.atan2(toPoint.y - fromPoint.y, toPoint.x - fromPoint.x);
+
+        switch (type) {
             case 'one_to_one':
-                // Simple arrowhead at the 'to' end
-                context.beginPath();
-                context.save();
-                context.translate(toPoint.x, toPoint.y);
-                context.rotate(angle);
-                context.moveTo(0, 0);
-                context.lineTo(-headlen * 1.5, -headlen / 2);
-                context.lineTo(-headlen * 1.5, headlen / 2);
-                context.closePath();
-                context.stroke();
-                context.restore();
+                this.drawText(context, "1", fromPoint, toPoint, angle - Math.PI);
+                this.drawText(context, "1", toPoint, fromPoint, angle);
                 break;
             case 'one_to_many':
-                // Simple arrowhead at the 'to' end
-                context.beginPath();
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle - Math.PI / 6), toPoint.y - headlen * Math.sin(angle - Math.PI / 6));
-                context.moveTo(toPoint.x, toPoint.y);
-                context.lineTo(toPoint.x - headlen * Math.cos(angle + Math.PI / 6), toPoint.y - headlen * Math.sin(angle + Math.PI / 6));
-                context.stroke();
+                this.drawText(context, "1", fromPoint, toPoint, angle - Math.PI);
+                this.drawFork(context, toPoint, fromPoint, angle);
+                break;
+            case 'many_to_one':
+                this.drawFork(context, fromPoint, toPoint, angle - Math.PI);
+                this.drawText(context, "1", toPoint, fromPoint, angle);
+                break;
+            case 'many_to_many':
+                // Dibuja el símbolo de tenedor en ambos extremos
+                this.drawFork(context, fromPoint, toPoint, angle - Math.PI);
+                this.drawFork(context, toPoint, fromPoint, angle);
                 break;
         }
+    }
+
+    drawFork(context, point, otherPoint, angle) {
+        const headLength = 10;
+        const forkSpread = Math.PI / 6;
+
+        const x1 = point.x - headLength * Math.cos(angle - forkSpread);
+        const y1 = point.y - headLength * Math.sin(angle - forkSpread);
+
+        const x2 = point.x - headLength * Math.cos(angle);
+        const y2 = point.y - headLength * Math.sin(angle);
+
+        const x3 = point.x - headLength * Math.cos(angle + forkSpread);
+        const y3 = point.y - headLength * Math.sin(angle + forkSpread);
+
+        context.save();
+        context.beginPath();
+        context.moveTo(x1, y1);
+        context.lineTo(point.x, point.y);
+        context.lineTo(x3, y3);
+        context.moveTo(point.x, point.y);
+        context.lineTo(x2, y2);
+        context.strokeStyle = '#E0F2FE';
+        context.lineWidth = 2.5;
+        context.stroke();
+        context.restore();
+    }
+
+    drawText(context, text, point, otherPoint, angle) {
+        context.save();
+        context.fillStyle = '#E0F2FE';
+        context.font = '14px Inter';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+
+        const offset = 20;
+        const textX = point.x + offset * Math.cos(angle);
+        const textY = point.y + offset * Math.sin(angle);
+
+        context.fillText(text, textX, textY);
+        context.restore();
     }
 }

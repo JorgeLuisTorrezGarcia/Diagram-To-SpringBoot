@@ -1,75 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
   <title>Diagrama | <%= proyecto.name %>
   </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="resources/css/logoFICCT.jpg" type="image/x-icon">
-
-  <!-- Enlace al archivo CSS externo -->
-  <link rel="stylesheet" href="/resources/css/style2.css">
-
-  <!-- Font Awesome para íconos -->
+  <!-- Iconos de Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3b82f6',
+            secondary: '#60a5fa',
+            accent: '#10b981',
+            'dark-bg': '#0f172a',
+            'dark-surface': '#1e293b',
+            'text-light': '#f8fafc',
+            'text-gray': '#94a3b8',
+            danger: '#ef4444',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/resources/css/style2.css">
 </head>
 
-<body>
-  <!-- Barra de Herramientas -->
-  <div class="container">
-    <div class="toolbar-section">
-      <button class="componentes tool-button active" id="tool-select" title="Select/Move"><i class="fas fa-mouse-pointer"></i></button>
-      <button class="componentes tool-button" id="tool-class" title="Add Class">Clase</button>
-      <button class="componentes tool-button" id="tool-one_to_many" title="one_to_many">one_to_many</button>
-      <button class="componentes tool-button" id="tool-one_to_one" title="one_to_one">one_to_one</button>
-      <button class="componentes tool-button" id="tool-many_to_many" title="many_to_many">many_to_many</button>
-      <button class="componentes tool-button" id="tool-many_to_one" title="many_to_one">many_to_one</button>
-      <button class="componentes tool-button" id="tool-delete" title="Delete"><i class="fas fa-eraser">Delete</i></button>
-    </div>
-
-    <div class="toolbar-section">
-      <strong>Actions:</strong>
-      <button class="componentes" id="saveButton"><i class="fas fa-save"></i> Save</button>
-      <button class="componentes" id="exportImageButton" title="Export as Image">Export IMG</button>
-      <button class="componentes" id="downloadJavaButton" title="Export Project">SpringBoot</button>
-
-    </div>
-    
-    <div class="ai-toolbar">
-      <h4>✨ Generar con IA</h4>
-      <textarea id="ai-description" placeholder="Ejemplos:
-        • 'Agrega una clase Producto con id:Long, nombre:String, precio:Double'
-        • 'Necesito un ejemplo de sistema de ventas'
-        • 'Añade relación one-to-many entre Cliente y Pedido'
-        • 'Genera 3 clases para un sistema bancario'" rows="4"
-        style="width: 300px; padding: 8px; margin: 5px 0;"></textarea>
-    
-      <button id="generate-with-ai"
-        style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">
-        🚀 Generar y Agregar
+<body class="bg-dark-bg text-text-light min-h-screen">
+  <!-- Barra de Herramientas Principal -->
+  <div
+    class="w-full p-4 md:px-8 bg-dark-surface shadow-lg flex flex-col md:flex-row items-center justify-between rounded-b-xl border-b-2 border-primary">
+    <div class="flex flex-wrap justify-center md:justify-start items-center gap-4 mb-4 md:mb-0">
+      <h1 class="text-xl md:text-2xl font-bold text-text-light mb-2 md:mb-0" id="project-title">Diagrama | <%=
+          proyecto.name %>
+      </h1>
+      <button class="tool-button px-4 py-2 bg-primary rounded-full hover:bg-secondary transition duration-300 active"
+        id="tool-select" title="Select/Move">
+        <i class="fas fa-mouse-pointer mr-1"></i> <span class="hidden md:inline">Select</span>
       </button>
-    
-      <div id="ai-loading" style="display: none; margin-top: 10px; color: #666;">
-        ⏳ Generando con Gemini AI...
-      </div>
-    
-      <div style="font-size: 12px; color: #666; margin-top: 10px;">
-        💡 Los nuevos elementos se agregarán al diagrama actual
-      </div>
+      <button class="tool-button px-4 py-2 bg-primary rounded-full hover:bg-secondary transition duration-300"
+        id="tool-class" title="Add Class">
+        <i class="fas fa-cube mr-1"></i> <span class="hidden md:inline">Clase</span>
+      </button>
+      <button class="tool-button px-4 py-2 bg-primary rounded-full hover:bg-secondary transition duration-300"
+        id="tool-one_to_many" title="one_to_many">
+        <span class="hidden md:inline">1:N</span>
+      </button>
+      <button class="tool-button px-4 py-2 bg-primary rounded-full hover:bg-secondary transition duration-300"
+        id="tool-one_to_one" title="one_to_one">
+        <span class="hidden md:inline">1:1</span>
+      </button>
+      <button class="tool-button px-4 py-2 bg-primary rounded-full hover:bg-secondary transition duration-300"
+        id="tool-many_to_many" title="many_to_many">
+        <span class="hidden md:inline">N:N</span>
+      </button>
+      <button class="tool-button px-4 py-2 bg-primary rounded-full hover:bg-secondary transition duration-300"
+        id="tool-many_to_one" title="many_to_one">
+        <span class="hidden md:inline">N:1</span>
+      </button>
+      <button class="tool-button px-4 py-2 bg-danger rounded-full hover:bg-red-600 transition duration-300"
+        id="tool-delete" title="Delete">
+        <i class="fas fa-eraser mr-1"></i> <span class="hidden md:inline">Borrar</span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center md:justify-end items-center gap-4">
+      <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-emerald-600 transition duration-300 shadow-lg"
+        id="saveButton" title="Guardar proyecto">
+        <i class="fas fa-save mr-1"></i> Guardar
+      </button>
+      <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-emerald-600 transition duration-300 shadow-lg"
+        id="exportImageButton" title="Exportar como imagen">
+        <i class="fas fa-image mr-1"></i> Exportar IMG
+      </button>
+      <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-emerald-600 transition duration-300 shadow-lg"
+        id="downloadJavaButton" title="Exportar a SpringBoot">
+        <i class="fas fa-file-code mr-1"></i> SpringBoot
+      </button>
+      <button class="px-4 py-2 bg-secondary text-white rounded-full hover:bg-primary transition duration-300 shadow-lg"
+        id="open-ai-modal-btn">
+        <i class="fas fa-magic mr-1"></i> IA
+      </button>
+      <!-- Nuevo botón para iniciar el tour -->
+      <button class="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-700 transition duration-300 shadow-lg"
+        id="start-tour-btn">
+        <i class="fas fa-question-circle mr-1"></i> Ayuda
+      </button>
     </div>
   </div>
 
   <!-- Canvas para dibujar el diagrama -->
-  <div class="lienzo">
-    <canvas id="canvas" width="1500" height="800"></canvas>
+  <div
+    class="lienzo flex-grow mt-4 w-[95%] md:w-[90%] lg:w-[85%] mx-auto rounded-xl shadow-lg border-2 border-primary overflow-hidden">
+    <canvas id="canvas" class="w-full h-full"></canvas>
   </div>
 
-  <!-- Campos ocultos para pizarra_id y proyecto_name -->
   <input id="objetos" type="hidden" value='<%= JSON.stringify(proyecto.objetos) %>'>
-
   <input id="pizarra_id" type="hidden" value="<%= pizarra_id %>">
   <input id="proyecto_name" type="hidden" value="<%= proyecto.name %>">
 
-  <!-- Modal para editar clases -->
   <div id="classModal" class="modal">
     <div class="modal-content">
       <span id="closeModal" class="close">&times;</span>
@@ -77,25 +119,105 @@
       <label for="className">Nombre de la clase:</label><br>
       <input type="text" id="className"><br><br>
       <h3>Atributos</h3>
-      <textarea id="classAttributes" rows="5" placeholder="Ingresa cada atributo en una línea separada"></textarea><br><br>
+      <textarea id="classAttributes" rows="5"
+        placeholder="Ingresa cada atributo en una línea separada"></textarea><br><br>
       <button id="saveClass">Guardar</button>
+    </div>
+  </div>
+
+  <div id="ai-modal" class="ai-modal">
+    <div class="ai-modal-content">
+      <span class="close-modal-btn" id="close-ai-modal-btn">&times;</span>
+      <h4 class="text-center">✨ Generar con IA</h4>
+      <div class="mt-4">
+        <textarea id="ai-description"
+          class="w-full p-3 rounded-lg text-text-light focus:outline-none focus:ring-2 focus:ring-secondary transition duration-300 resize-none"
+          placeholder="Ejemplos:
+                • 'Agrega una clase Producto con id:Long, nombre:String, precio:Double'
+                • 'Necesito un ejemplo de sistema de ventas'
+                • 'Añade relación one-to-many entre Cliente y Pedido'
+                • 'Genera 3 clases para un sistema bancario'" rows="6"></textarea>
+      </div>
+      <button id="generate-with-ai"
+        class="mt-4 w-full py-3 bg-secondary text-white font-bold rounded-lg hover:bg-primary transition duration-300 shadow-md">
+        🚀 Generar y Agregar
+      </button>
+      <div id="ai-loading" class="mt-4 text-center text-text-gray font-semibold">
+        ⏳ Generando con Gemini AI...
+      </div>
+      <div class="text-sm text-center text-text-gray mt-2">
+        💡 Los nuevos elementos se agregarán al diagrama actual
+      </div>
     </div>
   </div>
 
   <!-- Scripts -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Scripts personalizados -->
-
- 
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
 
   <script src="/resources/js/UMLClass.js"></script>
   <script src="/resources/js/UMLRelationship.js"></script>
   <script src="/resources/js/main.js"></script>
-  <!-- <script src="/resources/js/extras.js"></script> -->
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const openAiBtn = document.getElementById('open-ai-modal-btn');
+      const aiModal = document.getElementById('ai-modal');
+      const closeAiBtn = document.getElementById('close-ai-modal-btn');
+      const canvas = document.getElementById('canvas');
+      const lienzoDiv = document.querySelector('.lienzo');
 
+      if (openAiBtn && aiModal && closeAiBtn && canvas && lienzoDiv) {
+        openAiBtn.addEventListener('click', () => {
+          aiModal.style.display = 'flex';
+        });
+
+        closeAiBtn.addEventListener('click', () => {
+          aiModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+          if (event.target === aiModal) {
+            aiModal.style.display = 'none';
+          }
+        });
+
+        function resizeCanvas() {
+          canvas.width = lienzoDiv.clientWidth;
+          canvas.height = lienzoDiv.clientHeight;
+          // Llama a tu función de redibujar aquí
+          // Por ejemplo: drawAllElements();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+      } else {
+        console.error('No se encontraron todos los elementos del DOM necesarios.');
+      }
+
+      // Nuevo Script para Driver.js
+      const driver = window.driver.js.driver;
+      const tour = driver({
+        showProgress: true,
+        steps: [
+          { element: '#project-title', popover: { title: 'Tu Proyecto', description: 'Aquí puedes ver el nombre del proyecto actual.' } },
+          { element: '#tool-select', popover: { title: 'Modo de Selección', description: 'Usa esta herramienta para seleccionar y mover los elementos del diagrama.' } },
+          { element: '#tool-class', popover: { title: 'Añadir Clases', description: 'Haz clic aquí para crear una nueva clase UML y arrástrala al lienzo.' } },
+          { element: '#tool-one_to_many', popover: { title: 'Relaciones', description: 'Selecciona una de estas herramientas para dibujar relaciones entre tus clases.' } },
+          { element: '#saveButton', popover: { title: 'Guardar y Exportar', description: 'Estos botones te permiten guardar tu trabajo, exportarlo como imagen o generar código para SpringBoot.' } },
+          { element: '#open-ai-modal-btn', popover: { title: 'Generación con IA', description: 'Abre el modal de IA para generar clases y relaciones a partir de texto. ¡Pruébalo!' } },
+          { element: '#canvas', popover: { title: 'El Lienzo', description: 'Este es tu área de trabajo. Aquí es donde se crean y modifican todos tus diagramas.' } },
+        ]
+      });
+
+      // Iniciar el tour cuando el usuario hace clic en el botón de ayuda
+      document.getElementById('start-tour-btn').addEventListener('click', () => {
+        tour.drive();
+      });
+    });
+  </script>
 </body>
 
 </html>
