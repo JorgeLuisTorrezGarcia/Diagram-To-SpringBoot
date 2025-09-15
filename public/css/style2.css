@@ -1,122 +1,69 @@
-:root {
-    --primary-color: #6366f1;
-    --secondary-color: #3b82f6;
-    --accent-color: #10b981;
-    --background: #0f172a;
-    --surface: #1e293b;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --danger: #ef4444;
-}
-
-/* Reset de márgenes y padding para un diseño más limpio */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Estilo general del cuerpo */
 body {
-    background-color: var(--background);
-    font-family: 'Arial', sans-serif;
-    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a;
+    color: #f8fafc;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
     overflow: hidden;
 }
 
-/* Contenedor de la barra de herramientas */
-.container {
-    background-color: var(--surface);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.ai-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
     width: 100%;
-    padding: 15px 20px;
-    /* Espaciado más compacto */
-    box-sizing: border-box;
-    border-bottom: 2px solid var(--primary-color);
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
-/* Sección de herramientas (botones) */
-.toolbar-section {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    /* Reducción de espacio entre botones */
-    margin-bottom: 15px;
-    justify-content: center;
-    /* Centra los botones */
-}
-
-.btn-ai {
-    background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
-    color: white;
-}
-/* Botones de herramientas */
-.tool-button {
-    background-color: var(--primary-color);
-    color: var(--text-primary);
-    border: none;
-    padding: 8px 12px;
-    font-size: 14px;
-    /* Tamaño de fuente más pequeño */
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    /*min-width: 50px;*/
-    /* Tamaño mínimo para los botones */
-}
-
-.tool-button:hover {
-    background-color: var(--secondary-color);
-}
-
-.tool-button.active {
-    background-color: var(--accent-color);
-}
-
-/* Estilo de los botones de acción */
-.toolbar-section button {
-    background-color: var(--secondary-color);
-    color: var(--text-primary);
-    border: none;
-    padding: 8px 12px;
-    font-size: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 100px;
-    margin: 5px;
-}
-
-.toolbar-section button:hover {
-    background-color: var(--accent-color);
-}
-
-/* Canvas para el diagrama */
-.lienzo {
-    margin-top: 3vh;
-    width: 90vw;
-    /* Ajuste al 90% del ancho de la pantalla */
-    max-width: 1500px;
-    height: 75vh;
-    /* Ajuste dinámico */
-    border-radius: 12px;
-    background-color: var(--surface);
-    border: 2px solid var(--primary-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.ai-modal-content {
     position: relative;
+    background-color: #1e293b;
+    margin: 10vh auto;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+    width: 450px;
+    animation: fadeIn 0.3s ease-out;
+    border: 1px solid #3b82f6;
 }
 
-/* Modal para editar clases */
+.ai-modal-content h4 {
+    color: #3b82f6;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.ai-modal-content textarea {
+    background-color: #10192a;
+    border: 1px solid #60a5fa;
+    color: #f8fafc;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #94a3b8;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal-btn:hover {
+    color: #ef4444;
+}
+
 .modal {
     display: none;
-    /* Oculto por defecto */
     position: fixed;
     z-index: 1;
     left: 0;
@@ -128,7 +75,7 @@ body {
 }
 
 .modal-content {
-    background-color: var(--surface);
+    background-color: #1e293b;
     margin: 10% auto;
     padding: 20px;
     border: 1px solid #888;
@@ -143,31 +90,30 @@ body {
     position: absolute;
     right: 15px;
     top: 5px;
-    color: var(--text-secondary);
+    color: #94a3b8;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
 }
 
 .close:hover {
-    color: var(--primary-color);
+    color: #3b82f6;
 }
 
-/* Estilo para inputs y textarea dentro del modal */
 .modal-content input[type="text"],
 .modal-content textarea {
     width: 90%;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid var(--primary-color);
+    border: 1px solid #3b82f6;
     border-radius: 8px;
-    background-color: var(--surface);
-    color: var(--text-primary);
+    background-color: #1e293b;
+    color: #f8fafc;
 }
 
 .modal-content button {
-    background-color: var(--primary-color);
-    color: var(--text-primary);
+    background-color: #3b82f6;
+    color: #f8fafc;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -176,54 +122,18 @@ body {
 }
 
 .modal-content button:hover {
-    background-color: var(--secondary-color);
+    background-color: #60a5fa;
 }
 
-/* Estilos para la barra de herramientas de IA */
-.ai-toolbar {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    max-width: 350px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.ai-toolbar h4 {
-    margin: 0 0 10px 0;
-    color: #2196F3;
-}
-
-#ai-description {
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: inherit;
-    resize: vertical;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-#generate-with-ai {
-    padding: 8px 15px;
-    background: #2196F3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    width: 100%;
-}
-
-#generate-with-ai:hover {
-    background: #1976D2;
-}
-
-#ai-loading {
-    display: none;
-    margin-top: 10px;
-    color: #666;
-}
