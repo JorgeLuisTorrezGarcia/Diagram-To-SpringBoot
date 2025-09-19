@@ -8,6 +8,9 @@ Una aplicación web para crear, guardar y gestionar proyectos de diagramas UML. 
 -   **Gestión de Proyectos:** Crear, ver y administrar múltiples proyectos de diagramado.
 -   **Lienzo Interactivo:** Una pizarra en tiempo real para dibujar diagramas UML (Clases y Relaciones).
 -   **Persistencia de Datos:** Los proyectos y diagramas se guardan en una base de datos MySQL.
+-   **Generación de Código:** Conversión de diagramas UML a código Spring Boot (Java).
+-   **Colaboración en Tiempo Real:** Uso de Socket.IO para permitir la edición simultánea de diagramas.
+-   **Integración con Gemini:** Generación de diagramas a partir de descripciones en lenguaje natural e imágenes.
 
 ## Tecnologías Utilizadas
 
