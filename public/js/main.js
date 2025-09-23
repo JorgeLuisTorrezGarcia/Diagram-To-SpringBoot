@@ -540,7 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupToolbar();
   adjustCanvasSize();
   updateCursor();
-  
+
   // Realizar el primer dibujado
   repaintCanvas();
   setupAITool();
@@ -570,16 +570,34 @@ async function generateWithAI() {
   if (aiLoading) aiLoading.style.display = 'block';
 
   try {
-    const response = await fetch('/generate-diagram', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        description: description,
-        pizarraId: pizarraId
-      })
-    });
+    // Revisar si hay imagen seleccionada en el modal
+    const imageInput = document.getElementById('ai-image-input');
+    let response;
+
+    if (imageInput && imageInput.files && imageInput.files[0]) {
+      // Enviar como multipart/form-data
+      const formData = new FormData();
+      formData.append('description', description);
+      formData.append('pizarraId', pizarraId);
+      formData.append('image', imageInput.files[0]);
+
+      response = await fetch('/generate-diagram', {
+        method: 'POST',
+        body: formData
+      });
+    } else {
+      // Enviar como JSON (retrocompatibilidad)
+      response = await fetch('/generate-diagram', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: description,
+          pizarraId: pizarraId
+        })
+      });
+    }
 
     const result = await response.json();
     console.log("Respuesta del servidor:", result);

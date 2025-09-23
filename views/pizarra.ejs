@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-  <title>Diagrama | <%= proyecto.name %>
+  <title>D | <%= proyecto.name %>
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="resources/css/logoFICCT.jpg" type="image/x-icon">
@@ -34,7 +34,7 @@
       }
     }
   </script>
-  
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/resources/css/style2.css">
 </head>
@@ -138,6 +138,15 @@
                 • 'Añade relación one-to-many entre Cliente y Pedido'
                 • 'Genera 3 clases para un sistema bancario'" rows="6"></textarea>
       </div>
+      <!-- Nueva sección: subir imagen para interpretación -->
+      <div class="mt-4">
+        <label class="block text-sm text-text-gray mb-2">Adjuntar imagen (opcional)</label>
+        <input type="file" id="ai-image-input" accept="image/*" class="w-full text-sm text-text-gray" />
+        <div id="ai-image-preview" class="mt-2">
+          <!-- preview inserted here -->
+        </div>
+        <div id="ai-image-warning" class="text-sm text-danger mt-2 hidden"></div>
+      </div>
       <button id="generate-with-ai"
         class="mt-4 w-full py-3 bg-secondary text-white font-bold rounded-lg hover:bg-primary transition duration-300 shadow-md">
         🚀 Generar y Agregar
@@ -195,6 +204,45 @@
         resizeCanvas();
       } else {
         console.error('No se encontraron todos los elementos del DOM necesarios.');
+      }
+
+      // Manejo del input de imagen en el modal de IA
+      const imageInput = document.getElementById('ai-image-input');
+      const imagePreview = document.getElementById('ai-image-preview');
+      const imageWarning = document.getElementById('ai-image-warning');
+
+      if (imageInput) {
+        imageInput.addEventListener('change', () => {
+          imagePreview.innerHTML = '';
+          imageWarning.classList.add('hidden');
+
+          const file = imageInput.files[0];
+          if (!file) return;
+
+          // Validar tipo y tamaño (limite 5MB)
+          if (!file.type.startsWith('image/')) {
+            imageWarning.textContent = 'El archivo debe ser una imagen.';
+            imageWarning.classList.remove('hidden');
+            imageInput.value = '';
+            return;
+          }
+          if (file.size > 5 * 1024 * 1024) {
+            imageWarning.textContent = 'La imagen debe ser menor a 5MB.';
+            imageWarning.classList.remove('hidden');
+            imageInput.value = '';
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '6px';
+            imagePreview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
       }
 
       // Nuevo Script para Driver.js
