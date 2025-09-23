@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const socket = io();
@@ -11,6 +10,14 @@ let relationshipStartClass = null;
 let isDragging = false;
 let tempLine = null; // For drawing relationship preview
 let offsetX, offsetY;
+
+// Zoom and Pan state
+let scale = 1;
+let origin = { x: 0, y: 0 };
+let isPanning = false;
+let panStart = { x: 0, y: 0 };
+const zoomIntensity = 0.2;
+
 
 const pizarraId = document.getElementById('pizarra_id').value;
 
@@ -70,7 +77,10 @@ socket.on('dibujo', (data) => {
 // ==================================================
 
 function repaintCanvas() {
+  context.save();
   context.clearRect(0, 0, canvas.width, canvas.height);
+  context.translate(origin.x, origin.y);
+  context.scale(scale, scale);
 
   const classes = objetos.filter(o => o.type === 'UMLClass');
   const relationships = objetos.filter(o => o.type === 'UMLRelationship');
@@ -92,6 +102,7 @@ function repaintCanvas() {
     context.lineTo(tempLine.to.x, tempLine.to.y);
     context.stroke();
   }
+  context.restore();
 }
 
 function adjustCanvasSize() {
@@ -106,21 +117,26 @@ function adjustCanvasSize() {
 
 // Canvas Listeners
 canvas.addEventListener('mousedown', (e) => {
-  const { x, y } = getMousePos(e);
-  const clickedClass = findClassAt(x, y);
+    const clickedClass = findClassAt(getMousePos(e).x, getMousePos(e).y);
 
   switch (activeTool) {
     case 'select':
       if (clickedClass) {
         selectedClass = clickedClass;
         isDragging = true;
+        const { x, y } = getMousePos(e);
         offsetX = x - selectedClass.x;
         offsetY = y - selectedClass.y;
+        canvas.style.cursor = 'grabbing';
+      } else {
+        isPanning = true;
+        panStart = { x: e.clientX, y: e.clientY };
         canvas.style.cursor = 'grabbing';
       }
       break;
 
     case 'class':
+      const { x, y } = getMousePos(e);
       const newClass = new UMLClass(generateUniqueId(), x - 75, y - 50, 'NewClass', ['attribute1']);
       objetos.push(newClass);
       selectedClass = newClass;
@@ -140,7 +156,7 @@ canvas.addEventListener('mousedown', (e) => {
     case 'many_to_many':
       if (clickedClass) {
         relationshipStartClass = clickedClass;
-        tempLine = { from: { x, y }, to: { x, y } };
+        tempLine = { from: getMousePos(e), to: getMousePos(e) };
       }
       break;
 
@@ -150,7 +166,7 @@ canvas.addEventListener('mousedown', (e) => {
         objetos = objetos.filter(obj => obj.id !== clickedClass.id && obj.from !== clickedClass.id && obj.to !== clickedClass.id);
         emitSocketEvent('eliminar', { id: clickedClass.id, type: 'UMLClass' });
       } else {
-        const clickedRel = findRelationshipAt(x, y);
+        const clickedRel = findRelationshipAt(getMousePos(e).x, getMousePos(e).y);
         if (clickedRel) {
           objetos = objetos.filter(obj => obj.id !== clickedRel.id);
           emitSocketEvent('eliminar', clickedRel);
@@ -162,6 +178,16 @@ canvas.addEventListener('mousedown', (e) => {
 });
 
 canvas.addEventListener('mousemove', (e) => {
+    if (isPanning) {
+        const dx = e.clientX - panStart.x;
+        const dy = e.clientY - panStart.y;
+        origin.x += dx;
+        origin.y += dy;
+        panStart = { x: e.clientX, y: e.clientY };
+        repaintCanvas();
+        return;
+    }
+
   const { x, y } = getMousePos(e);
 
   if (activeTool === 'select' && isDragging && selectedClass) {
@@ -177,12 +203,17 @@ canvas.addEventListener('mousemove', (e) => {
 });
 
 canvas.addEventListener('mouseup', (e) => {
+    if (isPanning) {
+        isPanning = false;
+        updateCursor();
+    }
+
   const { x, y } = getMousePos(e);
 
   if (activeTool === 'select') {
     isDragging = false;
     selectedClass = null;
-    canvas.style.cursor = 'grab';
+    updateCursor();
   }
 
   if (relationshipStartClass) {
@@ -229,6 +260,12 @@ function setupToolbar() {
     });
   });
 
+  // Zoom buttons
+  document.getElementById('zoom-in-btn').addEventListener('click', () => zoom(1));
+  document.getElementById('zoom-out-btn').addEventListener('click', () => zoom(-1));
+  document.getElementById('zoom-reset-btn').addEventListener('click', resetZoom);
+
+
   // Configurar eventos para los botones de acción
   const saveButton = document.getElementById('saveButton');
   if (saveButton) {
@@ -268,9 +305,11 @@ document.getElementById('saveClass').addEventListener('click', () => {
 
 function getMousePos(e) {
   const rect = canvas.getBoundingClientRect();
+  const screenX = e.clientX - rect.left;
+  const screenY = e.clientY - rect.top;
   return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
+    x: (screenX - origin.x) / scale,
+    y: (screenY - origin.y) / scale
   };
 }
 
@@ -516,6 +555,33 @@ function deserializeObject(obj) {
     return obj;
   }
 }
+
+// ==================================================
+// ZOOM & PAN FUNCTIONS
+// ==================================================
+
+function zoom(direction) {
+    const newScale = scale * (1 + direction * zoomIntensity);
+    const minScale = 0.1;
+    const maxScale = 5;
+    const clampedScale = Math.max(minScale, Math.min(maxScale, newScale));
+
+    const center = { x: canvas.width / 2, y: canvas.height / 2 };
+
+    // Adjust origin to zoom towards the center of the screen
+    origin.x = center.x - (center.x - origin.x) * (clampedScale / scale);
+    origin.y = center.y - (center.y - origin.y) * (clampedScale / scale);
+
+    scale = clampedScale;
+    repaintCanvas();
+}
+
+function resetZoom() {
+    scale = 1;
+    origin = { x: 0, y: 0 };
+    repaintCanvas();
+}
+
 
 // ==================================================
 // ON LOAD
