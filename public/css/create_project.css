@@ -1,0 +1,100 @@
+body {
+    background-color: #FBF3D5; /* New background color */
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.create-project-form { /* Renamed from .register-form for clarity */
+    background-color: #D6DAC8; /* New background color */
+    color: #333333; /* New text color */
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.create-project-form h1 {
+    text-align: center;
+    color: #9CAFAA; /* New heading color */
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.create-project-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555555; /* New label color */
+}
+
+.create-project-form input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #9CAFAA; /* New border color */
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.btn-cancel, .btn-save {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: medium;
+    color: #FBF3D5; /* New text color for buttons */
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancel {
+    background-color: #D6A99D; /* New cancel button color */
+}
+
+.btn-cancel:hover {
+    background-color: #9CAFAA; /* New cancel button hover color */
+}
+
+.btn-save {
+    background-color: #9CAFAA; /* New save button color */
+}
+
+.btn-save:hover {
+    background-color: #D6A99D; /* New save button hover color */
+}
+
+/* Inline styles from create.ejs */
+.select-wrapper {
+    position: relative;
+}
+
+.select-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #9CAFAA; /* New border color */
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.select-option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.select-option:hover {
+    background-color: #D6DAC8; /* New hover color */
+}

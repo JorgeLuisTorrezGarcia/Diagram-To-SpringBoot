@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('beforeunload', () => {
     saveCanvas();
   });
-}); window.addEventListener('resize', adjustCanvasSize);
+});
 
 // ==================================================
 // AI GENERATION - AGREGAR A EXISTENTE

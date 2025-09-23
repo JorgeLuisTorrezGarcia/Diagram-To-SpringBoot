@@ -18,13 +18,13 @@
       theme: {
         extend: {
           colors: {
-            primary: '#3b82f6',
-            secondary: '#60a5fa',
-            accent: '#10b981',
-            'dark-bg': '#0f172a',
-            'dark-surface': '#1e293b',
-            'text-light': '#f8fafc',
-            'text-gray': '#94a3b8',
+            primary: '#9CAFAA',
+            secondary: '#D6A99D',
+            accent: '#D6DAC8',
+            'dark-bg': '#FBF3D5',
+            'dark-surface': '#D6DAC8',
+            'text-light': '#333333',
+            'text-gray': '#555555',
             danger: '#ef4444',
           },
           fontFamily: {
@@ -80,15 +80,15 @@
     <div class="flex flex-wrap justify-center md:justify-end items-center gap-4">
       <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-emerald-600 transition duration-300 shadow-lg"
         id="saveButton" title="Guardar proyecto">
-        <i class="fas fa-save mr-1"></i> Guardar
+        <i class="fas fa-save mr-1"></i>
       </button>
       <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-emerald-600 transition duration-300 shadow-lg"
         id="exportImageButton" title="Exportar como imagen">
-        <i class="fas fa-image mr-1"></i> Exportar IMG
+        <i class="fas fa-image mr-1"></i> 
       </button>
       <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-emerald-600 transition duration-300 shadow-lg"
         id="downloadJavaButton" title="Exportar a SpringBoot">
-        <i class="fas fa-file-code mr-1"></i> SpringBoot
+        <i class="fas fa-file-code mr-1"></i> 
       </button>
       <button class="px-4 py-2 bg-secondary text-white rounded-full hover:bg-primary transition duration-300 shadow-lg"
         id="open-ai-modal-btn">
@@ -135,8 +135,8 @@
           placeholder="Ejemplos:
                 • 'Agrega una clase Producto con id:Long, nombre:String, precio:Double'
                 • 'Necesito un ejemplo de sistema de ventas'
-                • 'Añade relación one-to-many entre Cliente y Pedido'
-                • 'Genera 3 clases para un sistema bancario'" rows="6"></textarea>
+                • 'Genera 3 clases para un sistema bancario'" rows="6">
+        </textarea>
       </div>
       <!-- Nueva sección: subir imagen para interpretación -->
       <div class="mt-4">
@@ -149,7 +149,7 @@
       </div>
       <button id="generate-with-ai"
         class="mt-4 w-full py-3 bg-secondary text-white font-bold rounded-lg hover:bg-primary transition duration-300 shadow-md">
-        🚀 Generar y Agregar
+        Enviar
       </button>
       <div id="ai-loading" class="mt-4 text-center text-text-gray font-semibold">
         ⏳ Generando con Gemini AI...
@@ -177,6 +177,16 @@
       const closeAiBtn = document.getElementById('close-ai-modal-btn');
       const canvas = document.getElementById('canvas');
       const lienzoDiv = document.querySelector('.lienzo');
+      const projectTitle = document.getElementById('project-title');
+
+      // Make project title clickable
+      if (projectTitle) {
+        projectTitle.style.cursor = 'pointer';
+        projectTitle.title = 'Volver a la lista de proyectos';
+        projectTitle.addEventListener('click', () => {
+            window.location.href = '/proyecto';
+        });
+      }
 
       if (openAiBtn && aiModal && closeAiBtn && canvas && lienzoDiv) {
         openAiBtn.addEventListener('click', () => {
@@ -196,8 +206,10 @@
         function resizeCanvas() {
           canvas.width = lienzoDiv.clientWidth;
           canvas.height = lienzoDiv.clientHeight;
-          // Llama a tu función de redibujar aquí
-          // Por ejemplo: drawAllElements();
+          // Llama a la función de redibujado para restaurar el contenido del canvas
+          if (typeof repaintCanvas === 'function') {
+            repaintCanvas();
+          }
         }
 
         window.addEventListener('resize', resizeCanvas);
@@ -245,18 +257,22 @@
         });
       }
 
-      // Nuevo Script para Driver.js
+      // Improved Driver.js tour
       const driver = window.driver.js.driver;
       const tour = driver({
         showProgress: true,
         steps: [
-          { element: '#project-title', popover: { title: 'Tu Proyecto', description: 'Aquí puedes ver el nombre del proyecto actual.' } },
-          { element: '#tool-select', popover: { title: 'Modo de Selección', description: 'Usa esta herramienta para seleccionar y mover los elementos del diagrama.' } },
-          { element: '#tool-class', popover: { title: 'Añadir Clases', description: 'Haz clic aquí para crear una nueva clase UML y arrástrala al lienzo.' } },
-          { element: '#tool-one_to_many', popover: { title: 'Relaciones', description: 'Selecciona una de estas herramientas para dibujar relaciones entre tus clases.' } },
-          { element: '#saveButton', popover: { title: 'Guardar y Exportar', description: 'Estos botones te permiten guardar tu trabajo, exportarlo como imagen o generar código para SpringBoot.' } },
-          { element: '#open-ai-modal-btn', popover: { title: 'Generación con IA', description: 'Abre el modal de IA para generar clases y relaciones a partir de texto. ¡Pruébalo!' } },
-          { element: '#canvas', popover: { title: 'El Lienzo', description: 'Este es tu área de trabajo. Aquí es donde se crean y modifican todos tus diagramas.' } },
+            { element: '#project-title', popover: { title: 'Nombre del Proyecto', description: 'Este es el nombre de tu diagrama. ¡Haz clic aquí para volver a la lista de proyectos!' } },
+            { element: '#canvas', popover: { title: 'Tu Lienzo de Trabajo', description: 'Aquí es donde la magia sucede. Arrastra y suelta elementos para construir tu diagrama de clases.' } },
+            { element: '#tool-select', popover: { title: 'Herramienta de Selección', description: 'Con esta herramienta activada, puedes hacer clic para seleccionar clases, moverlas por el lienzo o hacer doble clic para editar sus atributos.' } },
+            { element: '#tool-class', popover: { title: 'Añadir una Clase', description: 'Haz clic aquí para activar el modo de añadir clase. Luego, haz clic en el lienzo para crear una nueva clase.' } },
+            { element: '#tool-one_to_one', popover: { title: 'Crear Relaciones', description: 'Usa este grupo de botones (1:1, 1:N, N:1, N:N) para dibujar líneas de relación entre tus clases. Simplemente selecciona un tipo de relación y arrastra desde una clase a otra.' } },
+            { element: '#tool-delete', popover: { title: 'Modo Borrador', description: 'Activa esta herramienta para eliminar clases o relaciones con un solo clic. ¡Ten cuidado, no se puede deshacer!' } },
+            { element: '#saveButton', popover: { title: 'Guardar Progreso', description: '¡No pierdas tu trabajo! Usa este botón para guardar el estado actual de tu diagrama en el servidor.' } },
+            { element: '#exportImageButton', popover: { title: 'Exportar como Imagen', description: 'Genera una imagen PNG de tu diagrama para compartirla o usarla en tu documentación.' } },
+            { element: '#downloadJavaButton', popover: { title: 'Generar Código Spring Boot', description: 'Exporta tu diagrama como entidades JPA de Spring Boot. ¡Ahorra tiempo de codificación!' } },
+            { element: '#open-ai-modal-btn', popover: { title: 'Asistente de IA', description: '¿Atascado? Usa la inteligencia artificial para generar clases, atributos o incluso diagramas completos a partir de una descripción o una imagen.' } },
+            { element: '#start-tour-btn', popover: { title: 'Ayuda y Guía', description: 'Puedes volver a ver esta guía en cualquier momento haciendo clic en este botón.' } }
         ]
       });
 

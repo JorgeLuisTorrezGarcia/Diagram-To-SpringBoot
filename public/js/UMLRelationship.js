@@ -20,7 +20,7 @@ class UMLRelationship {
             context.beginPath();
             context.moveTo(fromPoint.x, fromPoint.y);
             context.lineTo(toPoint.x, toPoint.y);
-            context.strokeStyle = '#E0F2FE'; // Color de línea claro
+            context.strokeStyle = '#111212ff'; // Color de línea claro
             context.lineWidth = 2.5; // Grosor de línea
             context.stroke();
 
@@ -53,7 +53,6 @@ class UMLRelationship {
     }
 
     drawCardinality(context, fromPoint, toPoint, type) {
-        const headLength = 10;
         const angle = Math.atan2(toPoint.y - fromPoint.y, toPoint.x - fromPoint.x);
 
         switch (type) {
@@ -63,56 +62,36 @@ class UMLRelationship {
                 break;
             case 'one_to_many':
                 this.drawText(context, "1", fromPoint, toPoint, angle - Math.PI);
-                this.drawFork(context, toPoint, fromPoint, angle);
+                this.drawText(context, "*", toPoint, fromPoint, angle);
                 break;
             case 'many_to_one':
-                this.drawFork(context, fromPoint, toPoint, angle - Math.PI);
+                this.drawText(context, "*", fromPoint, toPoint, angle - Math.PI);
                 this.drawText(context, "1", toPoint, fromPoint, angle);
                 break;
             case 'many_to_many':
-                // Dibuja el símbolo de tenedor en ambos extremos
-                this.drawFork(context, fromPoint, toPoint, angle - Math.PI);
-                this.drawFork(context, toPoint, fromPoint, angle);
+                this.drawText(context, "*", fromPoint, toPoint, angle - Math.PI);
+                this.drawText(context, "*", toPoint, fromPoint, angle);
                 break;
         }
     }
 
-    drawFork(context, point, otherPoint, angle) {
-        const headLength = 10;
-        const forkSpread = Math.PI / 6;
-
-        const x1 = point.x - headLength * Math.cos(angle - forkSpread);
-        const y1 = point.y - headLength * Math.sin(angle - forkSpread);
-
-        const x2 = point.x - headLength * Math.cos(angle);
-        const y2 = point.y - headLength * Math.sin(angle);
-
-        const x3 = point.x - headLength * Math.cos(angle + forkSpread);
-        const y3 = point.y - headLength * Math.sin(angle + forkSpread);
-
-        context.save();
-        context.beginPath();
-        context.moveTo(x1, y1);
-        context.lineTo(point.x, point.y);
-        context.lineTo(x3, y3);
-        context.moveTo(point.x, point.y);
-        context.lineTo(x2, y2);
-        context.strokeStyle = '#E0F2FE';
-        context.lineWidth = 2.5;
-        context.stroke();
-        context.restore();
-    }
-
     drawText(context, text, point, otherPoint, angle) {
         context.save();
-        context.fillStyle = '#E0F2FE';
+        context.fillStyle = '#090909ff';
         context.font = '14px Inter';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
 
-        const offset = 20;
-        const textX = point.x + offset * Math.cos(angle);
-        const textY = point.y + offset * Math.sin(angle);
+        const longitudinalOffset = -20; 
+        const perpendicularOffset = -20; 
+
+        const baseX = point.x + longitudinalOffset * Math.cos(angle);
+        const baseY = point.y + longitudinalOffset * Math.sin(angle);
+
+        const perpendicularAngle = angle + Math.PI / 2;
+
+        const textX = baseX + perpendicularOffset * Math.cos(perpendicularAngle);
+        const textY = baseY + perpendicularOffset * Math.sin(perpendicularAngle);
 
         context.fillText(text, textX, textY);
         context.restore();

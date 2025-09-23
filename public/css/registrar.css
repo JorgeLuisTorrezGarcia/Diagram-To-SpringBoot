@@ -1,10 +1,10 @@
 /* form User Registration */
 body {
-    background: linear-gradient(#007bff, #0056b3) fixed;
+    background: #D6DAC8;
 }
 .register-form {
-    background-color:#007bff;
-    color: white;
+    background-color:#FBF3D5;
+    color: #9CAFAA;
     width: 400px;
     margin: 0 auto;
     padding: 0px 20px 60px 20px;
@@ -16,7 +16,7 @@ body {
 
 .register-form h1 {
     text-align: left;
-    color: rgb(255, 255, 255);
+    color: #9CAFAA;
     font-size: 22px;
     padding: 70px 0 10px 0;
 }
@@ -24,13 +24,13 @@ body {
 .btn-cancel {
     width: 50%;
     padding: 15px;
-    background-color: #34D399;
+    background-color: #D6A99D;
     border: 0;
     box-sizing: border-box;
     cursor: pointer;
     font-weight: bold;
     font-size: medium;
-    color: #ffffff;
+    color: #FBF3D5;
     text-align: center;
     margin-top: 20px;
     /* Para dar la apariencia de un boton */
@@ -43,7 +43,7 @@ body {
 .btn-cancel:hover,
 .btn-cancel:active {
     color: #fff;
-    background-color: #6B7280;
+    background-color: #9CAFAA;
     border-color: #6B7280;
 }
 
@@ -55,13 +55,13 @@ body {
 .btn-save {
     width: 50%;
     padding: 15px;
-    background-color: #445ad4;
+    background-color: #9CAFAA;
     border: 0;
     box-sizing: border-box;
     cursor: pointer;
     font-weight: bold;
     font-size: medium;
-    color: #ffffff;
+    color: #FBF3D5;
     margin-top: 20px;
     /* Para dar la apariencia de un boton */
     -webkit-appearance: button;
@@ -73,7 +73,7 @@ body {
 .btn-save:hover,
 .btn-save:active {
     color: #fff;
-    background-color: #1E3A8A;
+    background-color: #D6A99D;
     border-color: #1E3A8A;
 }
 

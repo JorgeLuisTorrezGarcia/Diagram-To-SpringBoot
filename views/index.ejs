@@ -4,24 +4,47 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="resources/css/bienvenida.css">
+    <link rel="stylesheet" href="resources/css/index.css">
   	<link rel="shortcut icon" href="resources/css/logoFICCT.jpg" type="image/x-icon">
-    <title>Entrar al sitio | Diagram To SpringBoot</title>
-    <style>      
-    
-    </style>
+    <title>EXAMEN 1</title>
   </head>
-  <body class="text-center">       
-          <div class="logo"></div>  
-          <div class="contenedor">
-            <h1>Bienvenido a mi examen</h1>
-            <% if (login) { %>                
-                <h1>Usuario conectado: <strong><%= name %></strong></h1>                        
-                <a href="logout" class="a-logout">Logout</a>
-            <%} else { %>
-                <h1><strong><%= name %></strong></h1>   
-                <a href="login" class="a-login">Ir a Login</a>
-            <% } %>
-          </div>
+  <body>
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Modela tu Base de Datos y Genera código Spring Boot</h1>
+        <p>Una herramienta poderosa para visualizar tus diagramas de base de datos y convertirlos en entidades de Spring Boot sin esfuerzo.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="features">
+        <div class="feature">
+          <h2>Diseño Visual de BD</h2>
+          <p>Crea y edita diagramas de bases de datos de forma intuitiva. Define tablas, columnas, tipos de datos y claves primarias con facilidad.</p>
+        </div>
+        <div class="feature">
+          <h2>Relaciones Inteligentes</h2>
+          <p>Establece relaciones (uno a uno, uno a muchos, muchos a muchos) entre tus tablas y la herramienta las interpretará para generar las anotaciones correctas en Spring Boot.</p>
+        </div>
+        <div class="feature">
+          <h2>Generación de Código Automática</h2>
+          <p>Ahorra tiempo y reduce errores generando automáticamente las clases de entidad de Spring Boot a partir de tus diagramas, incluyendo atributos, getters, setters y anotaciones JPA.</p>
+        </div>
+      </section>
+
+      <section class="cta">
+        <h2>Comienza a modelar ahora</h2>
+        <p>Inicia sesión o regístrate para empezar a crear tus diagramas y generar tu código Spring Boot.</p>
+        <% if (login) { %>
+            <a href="logout" class="a-logout">Logout</a>
+        <%} else { %>
+            <a href="login" class="a-login">Ir a Login</a>
+        <% } %>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2025 EXAMEN 1. Todos los derechos reservados.</p>
+    </footer>
   </body>
 </html>
